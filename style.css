@@ -1,0 +1,99 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body {
+    background-color: #89cff0;
+}
+
+.calculator_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.calculator {
+    background-color: #212121;
+    width: 100%;
+    max-width: 375px;
+    min-height: 640px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 1rem;
+}
+
+.calculator_display {
+    min-height: 200px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    color: white;
+    padding: 1.5rem;
+    text-align: right;
+    flex: 1 1 0%;
+}
+
+.calculator_display .input {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.calculator_display .output {
+    font-size: 2.5rem;
+    font-weight: 700;
+    max-width: 100%;
+    width: 100%;
+    overflow: auto;
+}
+
+.calculator_display .operator {
+    color: #eb6666;
+}
+
+.calculator_display .brackets,
+.calculator_display .percent {
+    color: #26fed7;
+}
+
+.calculator_buttons {
+    padding: 1.5rem;
+    background-color: #3B3B3B;
+    border-radius: 1rem 1rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5,1fr);
+    gap: 0.7rem;
+    box-shadow: 0px -2px 16px rgba(0, 0, 0, 0.7);
+}
+
+.calculator_buttons .key {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #a3a1a1;
+    border-radius: 1rem;
+    padding: 30%;
+    border-style: none;
+    user-select: none;
+    transition: 0.1s ease;
+    color: white;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+    font-size: 1.5rem;
+    font-weight: 700; 
+}
+
+.calculator_buttons .key:hover {
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.2);
+    background-color: #ffdeb9;
+    color: black;
+    font-weight: bold;
+    transform: scale(1.05);
+}
