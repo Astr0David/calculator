@@ -45,7 +45,7 @@ for (let key of keys) {
       input.innerHTML = isClean(user_input);
     } else if (value == "=") {
       input.innerHTML = isClean(user_input);
-      output.innerHTML = eval(user_input);
+      output.innerHTML = addComma(eval(user_input));
     } else {
       if (isValid(value)) {
         user_input += value;
@@ -104,9 +104,8 @@ const isValid = function (char) {
 
 function isClean(user_input) {
   let input_array = user_input.split("");
-  let input_array_length = input_array.length;
 
-  for (let i = 0; i < input_array_length; i++) {
+  for (let i = 0; i < input_array.length; i++) {
     if (input_array[i] == "*") {
       input_array[i] = ` <span class="operator">x</span> `;
     } else if (input_array[i] == "/") {
@@ -125,4 +124,26 @@ function isClean(user_input) {
   }
 
   return input_array.join("");
+}
+
+function addComma(output) {
+  output = Math.round((output + Number.EPSILON) * 100000) / 100000;
+  let output_string = output.toString();
+  let decimal = output_string.split(".")[1];
+  output_string = output_string.split(".")[0];
+
+  let output_array = output_string.split("");
+
+  if (output_array.length > 3) {
+    for (let i = output_array.length - 3; i > 0; i -= 3) {
+      output_array.splice(i, 0, ",");
+    }
+  }
+
+  if (decimal) {
+    output_array.push(".");
+    output_array.push(decimal);
+  }
+
+  return output_array.join("");
 }
