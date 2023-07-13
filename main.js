@@ -44,8 +44,12 @@ for (let key of keys) {
       }
       input.innerHTML = isClean(user_input);
     } else if (value == "=") {
-      input.innerHTML = isClean(user_input);
-      output.innerHTML = addComma(eval(user_input));
+      if (user_input.includes("/0")) {
+        alert("You cannot divide by 0.");
+      } else {
+        input.innerHTML = isClean(user_input);
+        output.innerHTML = addComma(eval(user_input));
+      }
     } else {
       if (isValid(value)) {
         user_input += value;
