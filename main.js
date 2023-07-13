@@ -180,6 +180,7 @@ function evaluateExpression(expression) {
 function tokenizeExpression(expression) {
   const regex = /(\d+(\.\d+)?|\+|\-|\*|\/|%|\(|\))/g;
   const tokens = expression.match(regex);
+
   return tokens;
 }
 
@@ -234,31 +235,54 @@ function evaluatePostfix(postfix) {
 
   for (let token of postfix) {
     if (!isOperator(token)) {
-      stack.push(token);
+      stack.push(parseFloat(token));
     } else {
-      const operand2 = stack.pop();
-      const operand1 = stack.pop();
-      let result;
+      if (token === "-") {
+        const operand2 = stack.pop();
+        const operand1 = stack.pop();
+        let result;
 
-      switch (token) {
-        case "+":
-          result = operand1 + operand2;
-          break;
-        case "-":
+        if (isNaN(operand1)) {
+          result = -operand2;
+        } else {
           result = operand1 - operand2;
-          break;
-        case "*":
-          result = operand1 * operand2;
-          break;
-        case "/":
-          result = operand1 / operand2;
-          break;
-        case "%":
-          result = operand1 % operand2;
-          break;
-      }
+        }
 
-      stack.push(result);
+        stack.push(result);
+      } else if (token === "+") {
+        const operand2 = stack.pop();
+        const operand1 = stack.pop();
+        let result;
+
+        if (isNaN(operand1)) {
+          result = operand2;
+        } else {
+          result = operand1 + operand2;
+        }
+
+        stack.push(result);
+      } else {
+        const operand2 = stack.pop();
+        const operand1 = stack.pop();
+        let result;
+
+        switch (token) {
+          case "+":
+            result = operand1 + operand2;
+            break;
+          case "*":
+            result = operand1 * operand2;
+            break;
+          case "/":
+            result = operand1 / operand2;
+            break;
+          case "%":
+            result = operand1 % operand2;
+            break;
+        }
+
+        stack.push(result);
+      }
     }
   }
 
