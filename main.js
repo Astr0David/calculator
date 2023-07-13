@@ -3,6 +3,7 @@ const input = document.querySelector(".calculator_screen .input");
 const output = document.querySelector(".calculator_screen .output");
 
 let user_input = "";
+const operators = ["+", "-", "/", "%", "*"];
 
 for (let key of keys) {
   key.addEventListener("mousedown", () => {
@@ -50,6 +51,22 @@ for (let key of keys) {
         input.innerHTML = isClean(user_input);
         output.innerHTML = addComma(evaluateExpression(user_input));
       }
+    } else if (value == ".") {
+      if (user_input.indexOf(".") !== -1) {
+        for (let each in operators) {
+          if (user_input.lastIndexOf(each) > user_input.lastIndexOf(".")) {
+            if (isValid(".")) {
+              user_input += ".";
+              input.innerHTML = isClean(user_input);
+            }
+          }
+        }
+      } else {
+        if (isValid(".")) {
+          user_input += ".";
+          input.innerHTML = isClean(user_input);
+        }
+      }
     } else {
       if (isValid(value)) {
         user_input += value;
@@ -60,7 +77,6 @@ for (let key of keys) {
 }
 
 const isValid = function (char) {
-  const operators = ["+", "-", "/", "%", "*"];
   if (operators.includes(char)) {
     if (user_input == "") {
       if (char == "*" || char == "/" || char == "%") {
@@ -74,12 +90,14 @@ const isValid = function (char) {
       return false;
     }
   } else if (char == ".") {
-    if (
-      user_input[user_input.length - 1] == "." ||
-      operators.includes(user_input[user_input.length - 1]) ||
-      user_input[user_input.length - 1] == "(" ||
-      user_input[user_input.length - 1] == ")"
-    ) {
+    if (user_input.endsWith(".") || user_input.endsWith("(")) {
+      return false;
+    }
+    const lastOperatorIndex = user_input.lastIndexOf(
+      operators.find((operator) => user_input.includes(operator))
+    );
+    const lastDecimalIndex = user_input.lastIndexOf(".");
+    if (lastDecimalIndex > lastOperatorIndex) {
       return false;
     }
   } else if (char == "(") {
@@ -160,8 +178,7 @@ function evaluateExpression(expression) {
 }
 
 function tokenizeExpression(expression) {
-  // Tokenize the expression by splitting it into numbers, operators, parentheses, etc.
-  const regex = /(\d+|\+|\-|\*|\/|%|\(|\))/g;
+  const regex = /(\d+(\.\d+)?|\+|\-|\*|\/|%|\(|\))/g;
   const tokens = expression.match(regex);
   return tokens;
 }
@@ -185,10 +202,8 @@ function convertToPostfix(tokens) {
 
   for (let token of tokens) {
     if (!isOperator(token) && token !== "(" && token !== ")") {
-      // Number
       postfix.push(parseFloat(token));
     } else if (isOperator(token)) {
-      // Operator
       while (
         stack.length > 0 &&
         stack[stack.length - 1] !== "(" &&
@@ -198,14 +213,12 @@ function convertToPostfix(tokens) {
       }
       stack.push(token);
     } else if (token === "(") {
-      // Opening parenthesis
       stack.push(token);
     } else if (token === ")") {
-      // Closing parenthesis
       while (stack.length > 0 && stack[stack.length - 1] !== "(") {
         postfix.push(stack.pop());
       }
-      stack.pop(); // Pop the opening parenthesis
+      stack.pop();
     }
   }
 
@@ -221,10 +234,8 @@ function evaluatePostfix(postfix) {
 
   for (let token of postfix) {
     if (!isOperator(token)) {
-      // Operand (number)
       stack.push(token);
     } else {
-      // Operator
       const operand2 = stack.pop();
       const operand1 = stack.pop();
       let result;
@@ -255,39 +266,39 @@ function evaluatePostfix(postfix) {
 }
 
 const keyMap = {
-    "Digit0": "0",
-    "Digit1": "1",
-    "Digit2": "2",
-    "Digit3": "3",
-    "Digit4": "4",
-    "Digit5": "5",
-    "Digit6": "6",
-    "Digit7": "7",
-    "Digit8": "8",
-    "Digit9": "9",
-    "Period": ".",
-    "Slash": "/",
-    "KeyX": "*",
-    "Minus": "-",
-    "Equal": "+",
-    "Enter": "=",
-    "Backspace": "delete",
-  };
+  Digit0: "0",
+  Digit1: "1",
+  Digit2: "2",
+  Digit3: "3",
+  Digit4: "4",
+  Digit5: "5",
+  Digit6: "6",
+  Digit7: "7",
+  Digit8: "8",
+  Digit9: "9",
+  Period: ".",
+  Slash: "/",
+  KeyX: "*",
+  Minus: "-",
+  Equal: "+",
+  Enter: "=",
+  Backspace: "delete",
+};
 
-  document.addEventListener("keydown", (event) => {
-    const key = event.code;
-    const value = keyMap[key];
-    
-    if (key === "Digit5") {
-        if (event.shiftKey) {
-            const percentButton = document.querySelector('[data-key="%"]');
-            percentButton.click();
-        } else {
-            const numberfive = document.querySelector('[data-key="5"]');
-            numberfive.click();
-        }
-    }else if (value) {
-      const button = document.querySelector(`[data-key="${value}"]`);
-      button.click();
+document.addEventListener("keydown", (event) => {
+  const key = event.code;
+  const value = keyMap[key];
+
+  if (key === "Digit5") {
+    if (event.shiftKey) {
+      const percentButton = document.querySelector('[data-key="%"]');
+      percentButton.click();
+    } else {
+      const numberfive = document.querySelector('[data-key="5"]');
+      numberfive.click();
     }
-  });
+  } else if (value) {
+    const button = document.querySelector(`[data-key="${value}"]`);
+    button.click();
+  }
+});
