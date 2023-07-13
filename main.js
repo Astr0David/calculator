@@ -153,104 +153,141 @@ function addComma(output) {
 }
 
 function evaluateExpression(expression) {
-    const tokens = tokenizeExpression(expression);
-    const postfix = convertToPostfix(tokens);
-    const result = evaluatePostfix(postfix);
-    return result;
+  const tokens = tokenizeExpression(expression);
+  const postfix = convertToPostfix(tokens);
+  const result = evaluatePostfix(postfix);
+  return result;
+}
+
+function tokenizeExpression(expression) {
+  // Tokenize the expression by splitting it into numbers, operators, parentheses, etc.
+  const regex = /(\d+|\+|\-|\*|\/|%|\(|\))/g;
+  const tokens = expression.match(regex);
+  return tokens;
+}
+
+function isOperator(token) {
+  return ["+", "-", "*", "/", "%"].includes(token);
+}
+
+function getPrecedence(operator) {
+  if (operator === "+" || operator === "-") {
+    return 1;
+  } else if (operator === "*" || operator === "/" || operator === "%") {
+    return 2;
   }
-  
-  function tokenizeExpression(expression) {
-    // Tokenize the expression by splitting it into numbers, operators, parentheses, etc.
-    const regex = /(\d+|\+|\-|\*|\/|%|\(|\))/g;
-    const tokens = expression.match(regex);
-    return tokens;
-  }
-  
-  function isOperator(token) {
-    return ["+", "-", "*", "/", "%"].includes(token);
-  }
-  
-  function getPrecedence(operator) {
-    if (operator === "+" || operator === "-") {
-      return 1;
-    } else if (operator === "*" || operator === "/" || operator === "%") {
-      return 2;
-    }
-    return 0;
-  }
-  
-  function convertToPostfix(tokens) {
-    const postfix = [];
-    const stack = [];
-  
-    for (let token of tokens) {
-      if (!isOperator(token) && token !== "(" && token !== ")") {
-        // Number
-        postfix.push(parseFloat(token));
-      } else if (isOperator(token)) {
-        // Operator
-        while (
-          stack.length > 0 &&
-          stack[stack.length - 1] !== "(" &&
-          getPrecedence(stack[stack.length - 1]) >= getPrecedence(token)
-        ) {
-          postfix.push(stack.pop());
-        }
-        stack.push(token);
-      } else if (token === "(") {
-        // Opening parenthesis
-        stack.push(token);
-      } else if (token === ")") {
-        // Closing parenthesis
-        while (stack.length > 0 && stack[stack.length - 1] !== "(") {
-          postfix.push(stack.pop());
-        }
-        stack.pop(); // Pop the opening parenthesis
+  return 0;
+}
+
+function convertToPostfix(tokens) {
+  const postfix = [];
+  const stack = [];
+
+  for (let token of tokens) {
+    if (!isOperator(token) && token !== "(" && token !== ")") {
+      // Number
+      postfix.push(parseFloat(token));
+    } else if (isOperator(token)) {
+      // Operator
+      while (
+        stack.length > 0 &&
+        stack[stack.length - 1] !== "(" &&
+        getPrecedence(stack[stack.length - 1]) >= getPrecedence(token)
+      ) {
+        postfix.push(stack.pop());
       }
-    }
-  
-    while (stack.length > 0) {
-      postfix.push(stack.pop());
-    }
-  
-    return postfix;
-  }
-  
-  function evaluatePostfix(postfix) {
-    const stack = [];
-  
-    for (let token of postfix) {
-      if (!isOperator(token)) {
-        // Operand (number)
-        stack.push(token);
-      } else {
-        // Operator
-        const operand2 = stack.pop();
-        const operand1 = stack.pop();
-        let result;
-  
-        switch (token) {
-          case "+":
-            result = operand1 + operand2;
-            break;
-          case "-":
-            result = operand1 - operand2;
-            break;
-          case "*":
-            result = operand1 * operand2;
-            break;
-          case "/":
-            result = operand1 / operand2;
-            break;
-          case "%":
-            result = operand1 % operand2;
-            break;
-        }
-  
-        stack.push(result);
+      stack.push(token);
+    } else if (token === "(") {
+      // Opening parenthesis
+      stack.push(token);
+    } else if (token === ")") {
+      // Closing parenthesis
+      while (stack.length > 0 && stack[stack.length - 1] !== "(") {
+        postfix.push(stack.pop());
       }
+      stack.pop(); // Pop the opening parenthesis
     }
-  
-    return stack.pop();
   }
-  
+
+  while (stack.length > 0) {
+    postfix.push(stack.pop());
+  }
+
+  return postfix;
+}
+
+function evaluatePostfix(postfix) {
+  const stack = [];
+
+  for (let token of postfix) {
+    if (!isOperator(token)) {
+      // Operand (number)
+      stack.push(token);
+    } else {
+      // Operator
+      const operand2 = stack.pop();
+      const operand1 = stack.pop();
+      let result;
+
+      switch (token) {
+        case "+":
+          result = operand1 + operand2;
+          break;
+        case "-":
+          result = operand1 - operand2;
+          break;
+        case "*":
+          result = operand1 * operand2;
+          break;
+        case "/":
+          result = operand1 / operand2;
+          break;
+        case "%":
+          result = operand1 % operand2;
+          break;
+      }
+
+      stack.push(result);
+    }
+  }
+
+  return stack.pop();
+}
+
+const keyMap = {
+    "Digit0": "0",
+    "Digit1": "1",
+    "Digit2": "2",
+    "Digit3": "3",
+    "Digit4": "4",
+    "Digit5": "5",
+    "Digit6": "6",
+    "Digit7": "7",
+    "Digit8": "8",
+    "Digit9": "9",
+    "Period": ".",
+    "Slash": "/",
+    "KeyX": "*",
+    "Minus": "-",
+    "Equal": "+",
+    "Enter": "=",
+    "Backspace": "delete",
+  };
+
+  document.addEventListener("keydown", (event) => {
+    const key = event.code;
+    const value = keyMap[key];
+    
+    if (key === "Digit5") {
+        if (event.shiftKey) {
+            const percentButton = document.querySelector('[data-key="%"]');
+            percentButton.click();
+        } else {
+            const numberfive = document.querySelector('[data-key="5"]');
+            numberfive.click();
+        }
+    }else if (value) {
+      const button = document.querySelector(`[data-key="${value}"]`);
+      button.click();
+    }
+  });
