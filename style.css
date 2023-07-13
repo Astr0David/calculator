@@ -60,8 +60,7 @@ body {
   color: #eb6666;
 }
 
-.calculator_display .brackets,
-.calculator_display .percent {
+.calculator_display .brackets{
   color: #26fed7;
 }
 
